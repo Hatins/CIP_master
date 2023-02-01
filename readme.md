@@ -169,5 +169,5 @@ DQA
 ### Main results
 The experiment results of CIP, DAWN, DP against Knockoff, DFME, IDA, DQA:
 
-![Results](Figs/result.png)
+![Results](Figs/results.png)
 
