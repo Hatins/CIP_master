@@ -1,7 +1,7 @@
 # Categorical Inference Poisoning: Verifiable Defense Against Black-Box DNN Model Stealing Without Constraining Surrogate Data and Query Times
 
 ## About 
-Pytorch implementation of the categorical inference poisoning (CIP) framework proposed in the [paper](https://ieeexplore.ieee.org/document/10042038)
+Pytorch implementation of the categorical inference poisoning (CIP) framework proposed in the [paper](https://ieeexplore.ieee.org/document/10042038).
 
 <!-- ![show](Figs/framework.png) -->
 <img src=Figs/framework.png width="700">
