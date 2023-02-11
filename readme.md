@@ -1,22 +1,10 @@
 # Categorical Inference Poisoning: Verifiable Defense Against Black-Box DNN Model Stealing Without Constraining Surrogate Data and Query Times
 
 ## About 
-we propose a two-step
-categorical inference poisoning (CIP) framework, featuring both
-poisoning for performance degradation (PPD) and poisoning for
-backdooring (PBD). In the first poisoning step, incoming queries
-are classified into ID and (out-of-distribution) OOD ones using an
-energy score (ES) based OOD detector, and the latter are further
-classified into high ES and low ES ones, which are subsequently
-passed to a strong and a weak PPD process, respectively. In
-the second poisoning step, difficult ID queries are detected by a
-proposed reliability score (RS) measurement and are passed to a
-PBD process. In doing so, the first step OOD poisoning leads to
-substantial performance degradation, the second step ID poisoning
-embeds backdoors in the surrogate models, and both processes
-can well preserve model fidelity.
+Pytorch implementation of the categorical inference poisoning (CIP) framework proposed in the [paper](https://ieeexplore.ieee.org/document/10042038)
 
-![show](Figs/framework.png)
+<!-- ![show](Figs/framework.png) -->
+<img src=Figs/framework.png width="700">
 
 
 ## Installation
@@ -171,3 +159,5 @@ The experiment results of CIP, DAWN, DP against Knockoff, DFME, IDA, DQA:
 
 ![Results](Figs/results.png)
 
+## Citation Information
+H. Zhang, G. Hua*, X. Wang, H. Jiang, and W. Yang “Categorical inference poisoning: Verifiable defense against black-box DNN model stealing without constraining surrogate data and query times,” IEEE Transactions on Information Forensics and Security, 2023. [Link](https://ieeexplore.ieee.org/document/9456037)
