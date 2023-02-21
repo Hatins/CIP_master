@@ -10,7 +10,7 @@ Pytorch implementation of the categorical inference poisoning (CIP) framework pr
 <img src=Figs/framework.png width="700">
 
 
-<!-- ## Installation
+## Installation
 Environments: This project uses python=3.8.3 and pytorch=1.10.0
 ```shell
 pip install requirement.txt
@@ -23,7 +23,7 @@ python main.py
 ```
 The preparation and the structure of dataset:
 ```
-Dataset
+dataset
 |----Cifar10
 |  |----Cifar10_all
 |  |  |----train
@@ -160,7 +160,7 @@ DQA
 ### Main results
 The experiment results of CIP, DAWN, DP against Knockoff, DFME, IDA, DQA:
 
-![Results](Figs/results.png) -->
+![Results](Figs/results.png)
 
 ## Citation Information
 H. Zhang, G. Hua*, X. Wang, H. Jiang, and W. Yang “Categorical inference poisoning: Verifiable defense against black-box DNN model stealing without constraining surrogate data and query times,” IEEE Transactions on Information Forensics and Security, 2023. [Link](https://ieeexplore.ieee.org/document/9456037)

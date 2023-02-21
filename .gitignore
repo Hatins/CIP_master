@@ -6,4 +6,6 @@ Knockoff/
 OOD_Detection/
 Utils/
 Victim_Model_Train/
-requirements.txt
+dataset/
+runs/
+requirements0.txt
