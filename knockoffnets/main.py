@@ -11,12 +11,8 @@ from torch.utils.data.dataloader import DataLoader
 import torchvision.models as md
 import datetime
 from torch.optim.lr_scheduler import MultiStepLR
-from Adaptive_Poisoning.function import *
-from Utils.Ptloader import Ptloader
-from tensorboardX import SummaryWriter
-
-
-writer = SummaryWriter('./Tensorboard')
+from categorical_inference_poisoning import *
+from utils.Ptloader import Ptloader
 
 
 def soft_cross_entropy(pred, soft_targets, weights=None):
@@ -246,7 +242,6 @@ if __name__ == '__main__':
             accuracy_train_show = correct_train_number / args.query_times
             loop_train.set_description(f'training_Epoch [{each_epoch + 1}/{args.epoch}]')
             loop_train.set_postfix(loss=loss.item(), acc_train=accuracy_train_show)
-        writer.add_scalar('acc_train', accuracy_train_show, each_epoch)
 
         scheduler.step()
         # 测试集、触发集测试
@@ -265,7 +260,6 @@ if __name__ == '__main__':
                     loop_trigger.set_description(f'trigger__Validation')
                     loop_trigger.set_postfix(acc_trigger=accuracy_trigger_show)
                 accuracy_trigger = correct_trigger_number / len(trigger_set)
-                writer.add_scalar('acc_tri', accuracy_trigger, each_epoch)
 
         with torch.no_grad():
             for data, target in loop_test:
@@ -278,7 +272,6 @@ if __name__ == '__main__':
                 loop_test.set_postfix(acc_test=accuracy_test_show)
             accuracy_test = correct_test_number / len(test_set)
             accuracy_test_list.append(accuracy_test * 100)
-            writer.add_scalar('acc_test', accuracy_test, each_epoch)
 
         if accuracy_test > accuracy_best:
             accuracy_best = accuracy_test
