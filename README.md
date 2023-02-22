@@ -1,21 +1,15 @@
 # Categorical Inference Poisoning: Verifiable Defense Against Black-Box DNN Model Stealing Without Constraining Surrogate Data and Query Times
 
+## **---This Repo is Under Code Optimization---**
+
 ## About 
 Pytorch implementation of the categorical inference poisoning (CIP) framework proposed in the [paper](https://ieeexplore.ieee.org/document/10042038).
-
-
-## Codes to be released...
 
 
 <!-- ![show](Figs/framework.png) -->
 <img src=Figs/framework.png width="700">
 
 
-## Installation
-Environments: This project uses python=3.8.3 and pytorch=1.10.0
-```shell
-pip install requirement.txt
-```
 ## Quick start
 ### Training of victim model.
 ```shell

@@ -1,3 +1,16 @@
+# ------------------------------------------------------------------------
+# CIP: Categorical Inference Poisoning: Verifiable Defense Against Black-Box DNN Model Stealing Without Constraining Surrogate Data and Query Times
+# Haitian Zhang, Guang Hua, Xinya Wang, Hao Jiang, and Wen Yang
+# paper: https://ieeexplore.ieee.org/document/10042038
+# ------------------------------------------------------------------------
+# DAWN: DAWN: Dynamic Adversarial Watermarking of Neural Networks
+# Sebastian Szyller, Buse Gul Atli, Samuel Marchal, N. Asokan
+# paper: https://dl.acm.org/doi/abs/10.1145/3474085.3475591
+# -----------------------------------------------------------------------
+# DP: Defending against neural network model stealing attacks using deceptive perturbations
+# Taesung Lee, Benjamin Edwards, Ian Molloy, Dong Su
+# paper: https://ieeexplore.ieee.org/document/8844598
+# -----------------------------------------------------------------------
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(__file__, "..")))
@@ -5,17 +18,17 @@ import torch
 import torch.nn.functional as F
 import torchvision
 import numpy as np
-import torch.backends.cudnn as cudnn
 from Model.wrn import WideResNet
 from PIL import Image
 from tqdm import tqdm
 import pandas as pd
-import random
 import heapq
 import random
+
 device = torch.device('cuda:0')
 to_np = lambda x: x.data.cpu().numpy()
 random.seed(0)
+
 
 def index_sort(p):
     p = np.array(p)
@@ -145,6 +158,7 @@ def DAWN_shuffle(target):
     for change in range(len(target) - 1, 0, -1):
         lower = random.randint(0, change-1)
         target[lower], target[change] = target[change], target[lower]
+
 def DAWN(p,numclass):
     p = list(p)
     number = int(pow(numclass,(1/2)))
@@ -157,6 +171,7 @@ def DAWN(p,numclass):
     for i in range(len(max_num_index_list)):
         p[row_index[i]] = p_copy[new_index[i]]
     return p
+
 def poison_fun_tensor(args,model, image_tensor, transform_test,
                       attack, ratio, dataset, trigger_path, poison_way, poison=True):
     # image_tensor is the input image list or tensor
@@ -165,7 +180,7 @@ def poison_fun_tensor(args,model, image_tensor, transform_test,
 
     if poison == False:
         ratio = 0
-    # using for IDA ground true labels
+    # using for compute the ground true labels
     if dataset == 'Cifar10':
         interval = 2500
     elif dataset == 'Cifar100':
@@ -229,7 +244,7 @@ def poison_fun_tensor(args,model, image_tensor, transform_test,
         file = pd.read_excel(file_path, sheet_name=sheet_name)
         FPR = float(file.loc[0]['FPR_energy'])
         Open_set_energy = float(file.loc[0]['open-set_energy'])
-        if ood_score > Open_set_energy:  # OOD-high-suspectible samples
+        if ood_score > Open_set_energy:  # OOD-high-suspectable samples
             ood_high_score_image_list.append(image_save.squeeze())
             ood_high_score_name_list.append(data)
             ood_high_score_list.append(ood_score)
@@ -474,28 +489,3 @@ def DP_poison(model, image_tensor, transform_test,poison=True):
             classification_probability_list.append(torch.tensor(p_list_np))
     classification_probability_list = torch.stack([i for i in classification_probability_list], dim=0)
     return classification_probability_list
-
-
-if __name__ == '__main__':
-    # define the model
-    host_model = WideResNet(depth=28, num_classes=10, widen_factor=10, dropRate=0.3)
-    model_name_ft = '../Victim_Model_Train/Trained/Prada/Cifar10_wrn_28_epoch_155_accuracy_94.47%.pt'
-    host_model.load_state_dict(torch.load(model_name_ft, map_location='cuda:0'))
-    image_tensor = []
-    image_path = 'Dataset/Surrogate_data_test'
-    filelist = os.listdir(image_path)  
-    filelist = sorted(filelist)
-    transform_tensor = torchvision.transforms.ToTensor()
-    transform_test = torchvision.transforms.Compose([
-        # torchvision.transforms.ToTensor(),
-        torchvision.transforms.RandomCrop(32, padding=4),
-        torchvision.transforms.RandomHorizontalFlip(),
-        torchvision.transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616)),
-    ])
-    for index, data in enumerate(filelist):
-        image_name = image_path + '/' + data  
-        image_PIL = Image.open(image_name).convert('RGB')
-        image_save = transform_tensor(image_PIL)
-        image_tensor.append(image_save)
-    result = poison_fun_tensor(host_model, image_tensor, transform_test, 'Prada', 0.05, 'Cifar10', trigger_path=None,
-                               poison=True)

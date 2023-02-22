@@ -1,8 +1,13 @@
+# ------------------------------------------------------------------------
+# CIP: Categorical Inference Poisoning: Verifiable Defense Against Black-Box DNN Model Stealing Without Constraining Surrogate Data and Query Times
+# Haitian Zhang, Guang Hua, Xinya Wang, Hao Jiang, and Wen Yang
+# paper: https://ieeexplore.ieee.org/document/10042038
+# -----------------------------------------------------------------------
+
 import os
 import numpy as np
 import sys
 sys.path.append(os.path.abspath(os.path.join(__file__, "..", "..")))
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -14,17 +19,18 @@ import torchvision.models as models
 from model.wrn import WideResNet
 
 from utils.Cutout import Cutout
+from utils import split_dataset
 
 import argparse
 device = torch.device('cuda:0')
 
 parser = argparse.ArgumentParser(description='Training the target (victim) model before surrogate attack', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('--dataset',type=str, default='CIFAR10', choices=['MNIST', 'Fashion_MNIST', 'CIFAR10', 'CIFAR100'], help='dataset selection')
-parser.add_argument('--model',type=str,default='resnet18', choices=['resnet18','wrn_28','vgg16'], help = 'victim (to-be-protected) model')
+parser.add_argument('--dataset',type=str, default='MNIST', choices=['MNIST', 'FMNIST', 'CIFAR10', 'CIFAR100'], help='dataset selection')
+parser.add_argument('--model',type=str,default='resnet18', choices=['resnet18','wrn28'], help = 'victim (to-be-protected) model')
 parser.add_argument('--num_classes', type=int, default=10, help='number of classes')
 parser.add_argument('--epoch', type=int, default=100, help='number of training epochs')
 parser.add_argument('--lr', type=float, default=0.1, help='learning rate')
-parser.add_argument('--partition',type=str, default='all', choices=['all', 'half'], help = 'data partition')
+parser.add_argument('--partition',type=str, default='half', choices=['all', 'half'], help = 'data partition')
 parser.add_argument('--batch',type=int, default=128, help='batchsize')
 parser.add_argument('--num_worker', type=int, default=4, help='number of workers')
 args = parser.parse_args()
@@ -92,7 +98,7 @@ if __name__ == '__main__':
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize((0.1307,), (0.3081,)),
         ])
-    elif args.dataset == 'Fashion_MNIST':
+    elif args.dataset == 'FMNIST':
         transform_train = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize((0.1307,), (0.3081,)),
@@ -129,13 +135,26 @@ if __name__ == '__main__':
     '''model preparation'''
     if args.model == 'resnet18':
         model = models.resnet18(num_classes=args.num_classes)
-    elif args.model == 'wrn_28':
+    elif args.model == 'wrn28':
         model = WideResNet(depth=28, num_classes=args.num_classes, widen_factor=10, dropRate=0.3)
     elif args.model == 'vgg16':
         model = models.vgg16_bn(num_classes=args.num_classes)
 
-    train_path = r'./Dataset' + '/'+ args.dataset + '/'+args.dataset+'_'+args.partition+'/train'
-    test_path = r'./Dataset' + '/' + args.dataset + '/'+args.dataset+'_'+args.partition+'/test'
+    
+    if args.partition == 'half':
+        dataset_path = r'./dataset/' + args.dataset +'_' +args.partition
+        if not os.path.exists(dataset_path):
+            print('Splitting dataset {} to into half for training and half for surrogate attack...'.format(args.dataset))
+            split_dataset.split_dataset('./dataset/', args.dataset)
+            print('Dataset splitting completed.')
+        else:
+            print('Split dataset already exists.')
+
+        train_path = r'./dataset' + '/' + args.dataset +'_' +args.partition + '/train'
+        test_path = r'./dataset' + '/' + args.dataset +'_' +args.partition + '/test'
+    else:
+        train_path = r'./dataset' + '/' + args.dataset + '/train'
+        test_path = r'./dataset' + '/' + args.dataset + '/test'
 
     train_set = torchvision.datasets.ImageFolder(train_path, transform=transform_train)
     test_set = torchvision.datasets.ImageFolder(test_path, transform=transform_test)
@@ -143,7 +162,5 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_set, batch_size=args.batch, shuffle=True, num_workers=args.num_worker)
     test_loader = DataLoader(test_set, batch_size=args.batch, shuffle=False, num_workers=args.num_worker)
 
-
     train(model, train_set, train_loader, test_set, test_loader, args.partition)
 
-    print('End.')
