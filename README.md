@@ -1,7 +1,5 @@
 # Categorical Inference Poisoning: Verifiable Defense Against Black-Box DNN Model Stealing Without Constraining Surrogate Data and Query Times
 
-## **---This Repo is Under Code Optimization---**
-
 ## About 
 Pytorch implementation of the categorical inference poisoning (CIP) framework proposed in the [paper](https://ieeexplore.ieee.org/document/10042038).
 
@@ -9,35 +7,40 @@ Pytorch implementation of the categorical inference poisoning (CIP) framework pr
 <!-- ![show](Figs/framework.png) -->
 <img src=Figs/framework.png width="700">
 
+## Training of Victim Model
+"Victim model" is equivalent to "to-be-protected model" or "original model" that has been trained using the original training data for the targeted functionality (i.e., classification tasks in this work).
 
-## Quick start
-### Training of victim model.
 ```shell
-cd Victim_Model_Train
+cd model_train
 python main.py
 ```
 The preparation and the structure of dataset:
 ```
 dataset
-|----Cifar10
-|  |----Cifar10_all
-|  |  |----train
-|  |  |  |----1.png
-|  |  |  |----2.png
-|  |  |  |----...
-|  |  |----test
-|  |----Cifar10_half
-|  |  |----train
-|  |  |  |----1.png
-|  |  |  |----2.png
-|  |  |  |----...
-|  |  |----test
+|----MNIST
+|  |----train
+|  |  |----1.png
+|  |  |----2.png
+|  |  |----...
+|  |----test
+|----MNIST_half
+|  |----train
+|  |  |----1.png
+|  |  |----2.png
+|  |  |----...
+|  |----test
+|----MNIST_surrogate
+|  |----train
+|  |  |----1.png
+|  |  |----2.png
+|  |  |----...
+|  |----test
 |----Cifar100
 |...
 |----FOOD101
 ```
-The Cifar10_half is the half of Cifar10_all, and it's used to test the IDA and DQA (The number of each category in Cifar10_half is half that of Cifar10_all).
-Note that it's necessary to set the form of attacks before testing:
+The MNIST_half is the half of MNIST_all, and it's used to test the IDA and DQA (The number of each category in MNIST_half is half that of MNIST). Note that it's necessary to set the type of attack before testing:
+
 ```python
 parser.add_argument('--attack',type=str,default='Datafree',choices=['Knockoff','Datafree','IDA'],help='choosing the attack forms')
 ```
