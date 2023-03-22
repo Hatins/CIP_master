@@ -42,11 +42,11 @@ dataset
 The MNIST_half is the half of MNIST_all, and it's used to test the IDA and DQA (The number of each category in MNIST_half is half that of MNIST). Note that it's necessary to set the type of attack before testing:
 
 ```python
-parser.add_argument('--attack',type=str,default='Datafree',choices=['Knockoff','Datafree','IDA'],help='choosing the attack forms')
+parser.add_argument('--attack',type=str,default='Datafree', choices=['Knockoff','Datafree','IDA'], help='choosing the attack forms')
 ```
 and the final pt file will be saved in 
 ```
-Trained
+trained
 |----Datafree
 |  |----without_fine-tuning.pt
 |----Knockoff
@@ -54,12 +54,12 @@ Trained
 ```
 ### Boosting OOD detector with OE:
 ```shell
-cd OOD_Detection
-python Detection_train.py
+cd ood_detection
+python detection_train.py
 ```
 Before the fine-tuning, the dataset of [tinyimage](https://archive.org/details/80-million-tiny-images-1-of-2) and the testing OOD datasets should be prepared:
 ```
-Dataset
+dataset
 |----Open-set test
 |  |----DTD
 |  |  |----1.png
@@ -73,7 +73,7 @@ The path setting of tiny_images is in the 13th and 28th lines in the file
 Note that the OOD datasets like DTD are used to test the performance of OOD detector and you could use any another type of OOD datasets even the noises.
 The final pt file will be saved in 
 ```
-Trained
+trained
 |----Datafree
 |  |----after_fine-tuning.pt
 |----Knockoff
@@ -161,4 +161,4 @@ The experiment results of CIP, DAWN, DP against Knockoff, DFME, IDA, DQA:
 ![Results](Figs/results.png)
 
 ## Citation Information
-H. Zhang, G. Hua*, X. Wang, H. Jiang, and W. Yang “Categorical inference poisoning: Verifiable defense against black-box DNN model stealing without constraining surrogate data and query times,” IEEE Transactions on Information Forensics and Security, 2023. [Link](https://ieeexplore.ieee.org/document/9456037)
+H. Zhang, G. Hua*, X. Wang, H. Jiang, and W. Yang “Categorical inference poisoning: Verifiable defense against black-box DNN model stealing without constraining surrogate data and query times,” IEEE Transactions on Information Forensics and Security, 2023. [Link](https://ieeexplore.ieee.org/document/10042038)
